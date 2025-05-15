@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    environment {
+        BUILD_SCRIPT = "build_script.sh"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Akash041/Jenkins-Task-2.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh "chmod +x ${env.BUILD_SCRIPT}"
+                sh "./${env.BUILD_SCRIPT}"
+            }
+        }
+    }
+
+    post {
+        success {
+            mail to: 'akashsmart124@gmail.com',
+                 subject: "🎉 Jenkins Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER} 🎉",
+                 body: "Good news! The build passed🤩. Check it here 👉🏻 ${env.BUILD_URL}"
+        }
+        failure {
+            mail to: 'akashsmart124@gmail.com',
+                 subject: "💣 Jenkins Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER} 💣",
+                 body: "The build failed😟. Check details here 👉🏻 ${env.BUILD_URL}"
+        }
+    }
+}
